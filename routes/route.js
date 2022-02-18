@@ -21,4 +21,13 @@ router.get("/contact", function(req, res){
     //res.sendFile(path.resolve(__dirname, 'pages/contact.html'));    
 })
 
+router.get("/create", function(req, res){
+    res.render('create');
+})
+
+router.post("/store", function(req, res){
+    console.log(req.body);
+    res.render('/');
+})
+
 module.exports = router;
