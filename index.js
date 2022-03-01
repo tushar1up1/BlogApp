@@ -6,10 +6,12 @@ const bodyParser = require('body-parser')
 const fileUpload = require('express-fileupload')
 
 const blogController = require('./controllers/blogsCntl');
+const userController = require('./controllers/userCntl');
 
 
 
 const Blog = require('./models/BlogPost')
+const User = require('./models/User')
 
 
 mongoose.connect('mongodb+srv://tushar:covid19@cluster0-fxprk.mongodb.net/genericDB?retryWrites=true&w=majority');
@@ -51,9 +53,14 @@ app.get("/contact", function(req, res){
 
 app.get("/create", blogController.create)
 
+app.post("/store", blogController.store) 
 
-app.post("/store", blogController.store)  
 
+app.get('/auth/register', userController.registerUser)
+app.post('/users/register', userController.storeUser)
+
+app.get('/auth/login', userController.login)
+app.post('/users/login', userController.processLogin)
 
 
 

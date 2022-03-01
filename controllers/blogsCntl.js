@@ -31,6 +31,8 @@ const store = (req, res) =>{
     })    
 }
 
+
+
 module.exports = {
     create, about , index, post, store
 }
