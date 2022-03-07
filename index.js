@@ -1,6 +1,4 @@
 const express = require('express')
-const path = require('path')
-const ejs = require('ejs')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const fileUpload = require('express-fileupload')
@@ -8,18 +6,13 @@ const fileUpload = require('express-fileupload')
 const blogController = require('./controllers/blogsCntl');
 const userController = require('./controllers/userCntl');
 
-
-
-const Blog = require('./models/BlogPost')
-const User = require('./models/User')
-
-
-mongoose.connect('mongodb+srv://tushar:covid19@cluster0-fxprk.mongodb.net/genericDB?retryWrites=true&w=majority');
+mongoose.connect('');
 
 mongoose.connection.on("connected", function(){
     console.log("Application is connected to Databse");
 })
 const app = new express()
+
 app.use(express.static('public'));
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
@@ -38,22 +31,26 @@ app.use('/store',validateMiddleWare)
 
 app.set('view engine', 'ejs');
 
-app.listen(3000, ()=>{
-    console.log('App listening on port 3000')
+app.listen(3001, ()=>{
+    console.log('App listening on port 3001')
 })
 
 app.get("/", blogController.index )
 
 app.get("/about", blogController.about)
 
-app.get("/post/:id", blogController.post)
+app.get("/displayBlog/:id", blogController.displayBlog)
 app.get("/contact", function(req, res){
     res.render('contact');
 })
 
-app.get("/create", blogController.create)
+app.get("/create", blogController.createBlog);
+app.post("/store", blogController.store); 
+app.get("/deleteBlog/:id", blogController.deleteBlog);
 
-app.post("/store", blogController.store) 
+app.route("/updateBlog/:id")
+    .get(blogController.getBlogById)
+    .post(blogController.updateBlog)
 
 
 app.get('/auth/register', userController.registerUser)

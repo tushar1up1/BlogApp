@@ -1,23 +1,28 @@
 const Blog = require('../models/BlogPost')
 const moment = require('moment')
 const path = require('path')
+const async = require('async')
+const { nextTick } = require('process')
 
-const create = (req, res) =>{
+const createBlog = (req, res) =>{
     res.render('create')
 }
 
 const index = async (req, res) => {
-    const blogs = await Blog.find({});
-    res.render('index', {blogposts: blogs});
+    await Blog.find({}).then(result=>{
+        res.render('index', {blogposts: result, moment: moment});
+    }).catch(error=>{
+        res.json(error)
+    })    
 }
 
 const about = (req, res) => {
     res.render('about');   
 }
 
-const post = async function(req, res){
+const displayBlog = async function(req, res){
     const blog = await Blog.findById(req.params.id);
-    res.render('post', {blog: blog, moment: moment});
+    res.render('displayBlog', {blog: blog, moment: moment});
 }
 
 const store = (req, res) =>{
@@ -31,8 +36,39 @@ const store = (req, res) =>{
     })    
 }
 
+const deleteBlog = async(req, res) => {
+    console.log(req.params.id);
+    await Blog.findByIdAndDelete(req.params.id)
+        .then(result=>{      
+        res.redirect("/")
+    })
+    .catch(err => next(err))
+     
+}
+const updateBlog = async(req, res) =>{
+    await Blog.findByIdAndUpdate(req.params.id, 
+        {
+            $set: {
+                title: req.body.title,
+                description: req.body.description
+            }
+        })
+        .then(result=> {
+            console.log(result);
+            res.redirect("/")
+        })
+        .catch(err => next(err))
+}
+const getBlogById = async(req, res) => {
+    await Blog.findById(req.params.id)
+        .then(blog =>{
+            res.render("updateBlog", {blog: blog})
+        })
+        .catch(err => next(err));
+}
+
 
 
 module.exports = {
-    create, about , index, post, store
+    createBlog, about , index, displayBlog, store, deleteBlog, updateBlog, getBlogById
 }
