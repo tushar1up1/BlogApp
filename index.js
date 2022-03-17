@@ -1,18 +1,22 @@
 const express = require('express')
-const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const fileUpload = require('express-fileupload')
+const expressSession = require('express-session')
+require('./models/db');
 
 const blogController = require('./controllers/blogsCntl');
 const userController = require('./controllers/userCntl');
+const authMiddleware = require('./middleware/authentication');
+const doNotReAuthMiddleware = require('./middleware/doNotReAuthenticate');
+global.checkUser = null;
 
-mongoose.connect('');
-
-mongoose.connection.on("connected", function(){
-    console.log("Application is connected to Databse");
-})
 const app = new express()
 
+app.use(expressSession({
+    secret: 'dragonfire',
+    resave: true,
+    saveUninitialized: true
+}))
 app.use(express.static('public'));
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
@@ -25,6 +29,10 @@ const validateMiddleWare = (req, res, next)=>{
 }
 next()
 }
+app.use('*', (req, res, next) => {
+    checkUser = req.session.userId;
+    next()
+})
 app.use('/store',validateMiddleWare)
 
 //const pageroute = require('./routes/route');
@@ -44,22 +52,22 @@ app.get("/contact", function(req, res){
     res.render('contact');
 })
 
-app.get("/create", blogController.createBlog);
-app.post("/store", blogController.store); 
+app.get("/create", authMiddleware, blogController.createBlog);
+app.post("/store", authMiddleware, blogController.store); 
 app.get("/deleteBlog/:id", blogController.deleteBlog);
 
 app.route("/updateBlog/:id")
-    .get(blogController.getBlogById)
-    .post(blogController.updateBlog)
+    .get(authMiddleware, blogController.getBlogById)
+    .post(authMiddleware, blogController.updateBlog)
 
 
-app.get('/auth/register', userController.registerUser)
-app.post('/users/register', userController.storeUser)
+app.get('/auth/register', doNotReAuthMiddleware, userController.registerUser)
+app.post('/users/register', doNotReAuthMiddleware, userController.storeUser)
 
-app.get('/auth/login', userController.login)
-app.post('/users/login', userController.processLogin)
+app.get('/auth/login', doNotReAuthMiddleware, userController.login)
+app.post('/users/login', doNotReAuthMiddleware, userController.processLogin)
 
-
+app.get('/auth/logout', userController.logout)
 
 
 

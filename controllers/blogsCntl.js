@@ -5,12 +5,17 @@ const async = require('async')
 const { nextTick } = require('process')
 
 const createBlog = (req, res) =>{
-    res.render('create')
+    if(req.session.userId) {
+        res.render('create')
+    } else {
+        res.redirect('/auth/login') 
+    }   
 }
 
 const index = async (req, res) => {
-    await Blog.find({}).then(result=>{
-        res.render('index', {blogposts: result, moment: moment});
+    await Blog.find({}).then(blogs=>{
+        console.log(req.session)
+        res.render('index', {blogposts: blogs, moment: moment});
     }).catch(error=>{
         res.json(error)
     })    

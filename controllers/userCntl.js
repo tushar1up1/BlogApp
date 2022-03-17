@@ -28,6 +28,7 @@ const processLogin = (req, res) => {
         if(user) {
             bcrypt.compare(password, user.password, (error, available) => {
                 if(available) { //password matching 
+                    req.session.userId = user._id;
                     res.redirect('/')
                 } else {
                     res.redirect('/auth/login'/*, {validuser: false}*/)
@@ -40,7 +41,13 @@ const processLogin = (req, res) => {
 
 }
 
+const logout = (req, res) => {
+    req.session.destroy(() =>{
+        res.redirect('/')
+    })
+}
+
 
 module.exports = {
-    registerUser, storeUser, login, processLogin
+    registerUser, storeUser, login, processLogin, logout
 }
