@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const fileUpload = require('express-fileupload')
 const expressSession = require('express-session')
+const flash = require('connect-flash')
 require('./models/db');
 
 const blogController = require('./controllers/blogsCntl');
@@ -21,6 +22,7 @@ app.use(express.static('public'));
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
 app.use(fileUpload())
+app.use(flash())
 
 const validateMiddleWare = (req, res, next)=>{
     console.log("validation middleware called")

@@ -22,14 +22,21 @@
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <p>Please add unique username/password</p>
+                        <% if(errors != null && errors.length > 0){ %>
+                            <ul class="list-group"></ul>
+                            <% for (var i = 0; i < errors.length; i++) { %>
+                            <li class="list-group-item list-group-item-danger"><%= errors[i] %></li>
+                            <% } %>
+                            </ul>
+                        <% } %>
                         <div class="my-5">
                             <form action="/users/register" method="POST">
                                 <div class="form-floating">
-                                    <input class="form-control" id="username" type="text" name="username" placeholder="User Name"/>
+                                    <input class="form-control" id="username" type="text" name="username" placeholder="User Name" value="<%=username %>"/>
                                     <label for="username">User Name</label>
                                 </div>
                                 <div class="form-floating">
-                                    <input class="form-control" id="description" type="password" name="password" placeholder="Password"/>
+                                    <input class="form-control" id="description" type="password" name="password" placeholder="Password" value="<%=password %>"/>
                                     <label for="password">Password</label>
                                 </div>
                                 <br />
