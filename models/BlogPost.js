@@ -5,7 +5,8 @@ const BlogPostSchema = new Schema({
     title: String,
     description: String,
     datePosted: {type: Date, default: new Date()},
-    image: String
+    image: String,
+    userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true}
 
 });
 

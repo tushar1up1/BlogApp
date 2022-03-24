@@ -6,14 +6,16 @@ const { nextTick } = require('process')
 
 const createBlog = (req, res) =>{
     if(req.session.userId) {
-        res.render('create')
+        res.render('create', {IsCreatePost: true})
     } else {
         res.redirect('/auth/login') 
     }   
 }
 
 const index = async (req, res) => {
-    await Blog.find({}).then(blogs=>{
+    await Blog.find({})
+        .populate('userId')
+        .then(blogs=>{
         console.log(req.session)
         res.render('index', {blogposts: blogs, moment: moment});
     }).catch(error=>{
@@ -26,7 +28,7 @@ const about = (req, res) => {
 }
 
 const displayBlog = async function(req, res){
-    const blog = await Blog.findById(req.params.id);
+    const blog = await Blog.findById(req.params.id).populate('userId');
     res.render('displayBlog', {blog: blog, moment: moment});
 }
 
@@ -36,7 +38,8 @@ const store = (req, res) =>{
         await Blog.create({
             title: req.body.title,
             description: req.body.description, 
-            image: '/img/'+image.name})
+            image: '/img/'+image.name,
+            userId: req.session.userId})
         res.redirect("/")
     })    
 }

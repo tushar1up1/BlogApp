@@ -30,11 +30,11 @@
                                 </h2>
                             </a>    
                             <p class="post-meta">
-                                <%=blogposts[i].description %>
+                                <%- blogposts[i].description %>
                             </p>
                             <span class="post-meta">
                                 Posted by
-                                <a href="#!">Start Bootstrap</a>
+                                <a href="#!"><%=blogposts[i].userId.username%></a>
                                 <%=moment(blogposts[i].datePosted).format('Do MMMM, YYYY')%>
                             </span>
                         </div>
